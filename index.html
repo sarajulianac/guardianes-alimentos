@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Guardianes de Alimentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --olive: #cdd17a;
+    --olive-dark: #a8ad52;
+    --olive-light: #e8ebb7;
+    --olive-muted: #dde097;
+    --cream: #f0ede4;
+    --cream-dark: #e4e0d4;
+    --dark: #2a2a1e;
+    --dark-mid: #3d3d2c;
+    --dark-soft: #5a5a3f;
+    --text-muted: #7a7a60;
+    --text-light: #9a9a7a;
+    --white: #ffffff;
+    --shadow: rgba(42,42,30,0.08);
+    --border: rgba(42,42,30,0.12);
+  }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: var(--cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* SCREENS */
+  .screen {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+    animation: fadeIn 0.35s ease;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* NAV BAR */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    background: var(--cream);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--dark);
+    letter-spacing: 0.02em;
+  }
+  .nav-logo span { color: var(--olive-dark); }
+  .nav-back {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav-back::before { content: '←'; font-size: 16px; }
+
+  /* BUTTONS */
+  .btn-primary {
+    background: var(--dark);
+    color: var(--olive);
+    border: none;
+    border-radius: 50px;
+    padding: 16px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    display: block;
+    text-align: center;
+  }
+  .btn-primary:hover { background: var(--dark-mid); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--dark);
+    border: 1.5px solid var(--dark);
+    border-radius: 50px;
+    padding: 15px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    display: block;
+    text-align: center;
+  }
+  .btn-secondary:hover { background: var(--cream-dark); }
+
+  .btn-olive {
+    background: var(--olive);
+    color: var(--dark);
+    border: none;
+    border-radius: 50px;
+    padding: 16px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    display: block;
+    text-align: center;
+  }
+  .btn-olive:hover { background: var(--olive-dark); transform: translateY(-1px); }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    transition: box-shadow 0.2s ease;
+  }
+  .card:hover { box-shadow: 0 4px 20px var(--shadow); }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--olive-light);
+    color: var(--dark-soft);
+    border-radius: 50px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .badge-dark {
+    background: var(--dark);
+    color: var(--olive);
+  }
+  .badge-white {
+    background: rgba(255,255,255,0.2);
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* TAG */
+  .tag-km {
+    display: inline-flex;
+    align-items: center;
+    background: var(--dark);
+    color: var(--olive);
+    border-radius: 50px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  /* INPUT */
+  .input-group {
+    margin-bottom: 16px;
+  }
+  .input-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .input-field {
+    width: 100%;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: var(--olive-dark); }
+  .input-field::placeholder { color: var(--text-light); }
+
+  select.input-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a60' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 44px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* PROGRESS STEPPER */
+  .step-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+  }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--cream-dark);
+    transition: all 0.3s;
+  }
+  .step-dot.active { background: var(--dark); width: 24px; border-radius: 4px; }
+  .step-dot.done { background: var(--olive-dark); }
+
+  /* ============ SCREEN 1: LANDING ============ */
+  #screen-landing {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .landing-hero {
+    background: var(--dark);
+    min-height: 55vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px 28px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image: radial-gradient(circle at 70% 30%, var(--olive) 0%, transparent 60%),
+                      radial-gradient(circle at 20% 80%, var(--olive) 0%, transparent 50%);
+  }
+
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.3;
+  }
+
+  .hero-circle {
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(205,209,122,0.12);
+    top: -80px; right: -60px;
+  }
+  .hero-circle-2 {
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(205,209,122,0.08);
+    top: 20px; right: 20px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 16px;
+    font-weight: 500;
+    position: relative;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--olive);
+  }
+
+  .hero-stat {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    position: relative;
+  }
+  .hero-stat-item {
+    flex: 1;
+    border-left: 2px solid rgba(205,209,122,0.3);
+    padding-left: 12px;
+  }
+  .hero-stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--olive);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(240,237,228,0.5);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  .landing-body {
+    padding: 28px 24px 32px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .value-prop {
+    font-size: 15px;
+    color: var(--dark-soft);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+  .value-prop strong { color: var(--dark); font-weight: 500; }
+
+  .feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0;
+  }
+
+  .landing-ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  .trust-line {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--text-light);
+    font-weight: 400;
+  }
+
+  /* ============ SCREEN 2: REGISTRO ============ */
+  .form-hero {
+    background: var(--dark);
+    padding: 28px 24px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 50%, rgba(205,209,122,0.08) 0%, transparent 60%);
+  }
+  .form-hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.2;
+    position: relative;
+  }
+  .form-hero-title span { color: var(--olive); font-style: italic; }
+  .form-hero-sub {
+    font-size: 13px;
+    color: rgba(240,237,228,0.55);
+    margin-top: 10px;
+    line-height: 1.5;
+    font-weight: 300;
+    position: relative;
+    letter-spacing: 0.02em;
+  }
+
+  .form-body {
+    padding: 28px 24px 32px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .vehicle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .vehicle-option {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 12px;
+    background: var(--white);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .vehicle-option.selected {
+    border-color: var(--olive-dark);
+    background: var(--olive-light);
+  }
+  .vehicle-icon { font-size: 22px; margin-bottom: 6px; }
+  .vehicle-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dark-soft);
+  }
+  .vehicle-option.selected .vehicle-name { color: var(--dark); }
+
+  /* ============ SCREEN 3: DASHBOARD ============ */
+  .dashboard-header {
+    background: var(--dark);
+    padding: 20px 24px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .dashboard-header-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 90% 10%, rgba(205,209,122,0.1) 0%, transparent 50%);
+  }
+  .dash-greeting {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(240,237,228,0.5);
+    margin-bottom: 6px;
+    font-weight: 400;
+    position: relative;
+  }
+  .dash-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--cream);
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .dash-route {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 10px 14px;
+    position: relative;
+  }
+  .dash-route-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--olive);
+    flex-shrink: 0;
+  }
+  .dash-route-text {
+    font-size: 13px;
+    color: rgba(240,237,228,0.8);
+    font-weight: 300;
+    flex: 1;
+  }
+  .dash-route-text strong { color: var(--cream); font-weight: 500; }
+
+  .dashboard-body {
+    padding: 20px 20px 24px;
+    flex: 1;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mission-card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .mission-card:hover { box-shadow: 0 4px 16px var(--shadow); transform: translateY(-1px); }
+  .mission-card:active { transform: translateY(0); }
+
+  .mission-card-top {
+    padding: 16px 16px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .mission-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--dark);
+    flex: 1;
+    padding-right: 8px;
+    line-height: 1.2;
+  }
+
+  .mission-card-metrics {
+    display: flex;
+    gap: 0;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    margin-top: 14px;
+  }
+  .metric-item {
+    flex: 1;
+    text-align: center;
+    padding: 0 8px;
+    border-right: 1px solid var(--border);
+  }
+  .metric-item:last-child { border-right: none; }
+  .metric-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .metric-unit { font-size: 11px; color: var(--text-light); font-weight: 400; }
+  .metric-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  .mission-card-bottom {
+    padding: 10px 16px;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .org-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--olive-dark);
+  }
+  .org-name {
+    font-size: 12px;
+    color: var(--dark-soft);
+    font-weight: 400;
+    flex: 1;
+  }
+  .card-arrow {
+    font-size: 14px;
+    color: var(--text-light);
+  }
+
+  .urgency-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 50px;
+  }
+  .urgency-high { background: #ffe4e1; color: #b33a2a; }
+  .urgency-mid { background: #fff3d6; color: #8a5e00; }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* ============ SCREEN 4: DETALLE MISIÓN ============ */
+  .mission-detail-hero {
+    background: var(--dark);
+    padding: 20px 24px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mission-detail-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 70%, rgba(205,209,122,0.1) 0%, transparent 55%);
+  }
+  .mission-detail-org {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 8px;
+    font-weight: 500;
+    position: relative;
+  }
+  .mission-detail-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.2;
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .route-visual {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 14px 16px;
+    position: relative;
+  }
+  .route-point {
+    flex: 1;
+  }
+  .route-point-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(240,237,228,0.45);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .route-point-city {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--cream);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .route-point-address {
+    font-size: 11px;
+    color: rgba(240,237,228,0.45);
+    margin-top: 2px;
+  }
+  .route-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 12px;
+  }
+  .route-arrow-line {
+    width: 40px;
+    height: 1px;
+    background: rgba(205,209,122,0.4);
+    position: relative;
+  }
+  .route-arrow-line::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -3px;
+    width: 0; height: 0;
+    border-left: 5px solid rgba(205,209,122,0.6);
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+  }
+  .route-km-badge {
+    margin-top: 5px;
+    background: var(--olive);
+    color: var(--dark);
+    border-radius: 50px;
+    padding: 2px 7px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .detail-body {
+    padding: 20px 20px 100px;
+    flex: 1;
+  }
+
+  .impact-section {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .impact-section-title {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .impact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .impact-metric {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .impact-metric-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .impact-metric-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+
+  .fiscal-card {
+    background: var(--dark);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fiscal-card-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 90% 50%, rgba(205,209,122,0.12) 0%, transparent 60%);
+  }
+  .fiscal-card-title {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--olive);
+    font-weight: 500;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .fiscal-card-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--cream);
+    line-height: 1.5;
+    font-weight: 300;
+    position: relative;
+  }
+  .fiscal-card-text strong { color: var(--olive); font-weight: 500; }
+  .fiscal-article {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 12px;
+    gap: 6px;
+    background: rgba(205,209,122,0.15);
+    border: 1px solid rgba(205,209,122,0.3);
+    border-radius: 50px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--olive);
+    position: relative;
+  }
+
+  .spec-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-label { font-size: 13px; color: var(--text-muted); font-weight: 400; }
+  .spec-value { font-size: 13px; color: var(--dark); font-weight: 500; }
+
+  .cta-fixed {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    padding: 16px 20px 24px;
+    background: linear-gradient(to top, var(--cream) 70%, transparent);
+    z-index: 20;
+  }
+
+  /* ============ SCREEN 5: RECOGIDA/ENTREGA ============ */
+  .pickup-header {
+    background: var(--dark);
+    padding: 20px 24px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pickup-header-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 60% 40%, rgba(205,209,122,0.1) 0%, transparent 55%);
+  }
+
+  .mission-progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  .mission-progress-fill {
+    height: 100%;
+    background: var(--olive);
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  .pickup-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.2;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .pickup-subtitle {
+    font-size: 13px;
+    color: rgba(240,237,228,0.5);
+    font-weight: 300;
+    position: relative;
+  }
+
+  .pickup-body {
+    padding: 24px 20px 100px;
+    flex: 1;
+  }
+
+  .step-card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .step-card.completed {
+    background: var(--cream);
+    border-color: var(--olive-light);
+  }
+  .step-card.active {
+    border-color: var(--dark);
+    border-width: 1.5px;
+  }
+  .step-number {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--cream-dark);
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+  }
+  .step-number.active { background: var(--dark); color: var(--olive); }
+  .step-number.done { background: var(--olive); color: var(--dark); }
+  .step-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .step-card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+  .step-card.completed .step-card-title { color: var(--text-muted); }
+
+  .address-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 10px;
+  }
+  .address-chip-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--olive-dark);
+    flex-shrink: 0;
+  }
+  .address-chip-text {
+    font-size: 12px;
+    color: var(--dark-soft);
+    font-weight: 400;
+  }
+
+  /* ============ SCREEN 6: CERTIFICACIÓN ============ */
+  .cert-header {
+    background: var(--dark);
+    padding: 32px 24px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cert-header-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 60%, rgba(205,209,122,0.15) 0%, transparent 60%);
+  }
+  .cert-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--olive);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    position: relative;
+    font-size: 28px;
+  }
+  .cert-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.2;
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .cert-subtitle {
+    font-size: 13px;
+    color: rgba(240,237,228,0.5);
+    font-weight: 300;
+    position: relative;
+    letter-spacing: 0.02em;
+  }
+
+  .cert-body {
+    padding: 24px 20px 32px;
+    flex: 1;
+  }
+
+  .impact-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .impact-summary-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .impact-summary-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .impact-summary-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  /* MEMBERSHIP CARD */
+  .member-card-wrapper {
+    perspective: 1000px;
+    margin-bottom: 20px;
+  }
+  .member-card {
+    background: var(--dark);
+    border-radius: 20px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .member-card-bg1 {
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(205,209,122,0.15) 0%, transparent 70%);
+    top: -60px; right: -60px;
+  }
+  .member-card-bg2 {
+    position: absolute;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 1px solid rgba(205,209,122,0.1);
+    bottom: 20px; left: 20px;
+  }
+  .member-card-bg3 {
+    position: absolute;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 1px solid rgba(205,209,122,0.07);
+    bottom: 40px; left: 40px;
+  }
+  .member-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+  }
+  .member-card-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--olive);
+    letter-spacing: 0.04em;
+  }
+  .member-badge {
+    background: var(--olive);
+    color: var(--dark);
+    border-radius: 50px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .member-card-mid {
+    position: relative;
+    margin: 16px 0 8px;
+  }
+  .member-card-role {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--olive);
+    font-weight: 500;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+  .member-card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1;
+  }
+  .member-card-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    position: relative;
+  }
+  .member-card-id {
+    font-size: 11px;
+    color: rgba(240,237,228,0.35);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+  }
+  .member-card-since {
+    font-size: 10px;
+    color: rgba(205,209,122,0.6);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-align: right;
+  }
+
+  .fiscal-summary {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+  .fiscal-summary-title {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .fiscal-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .fiscal-summary-row:last-child { border-bottom: none; }
+  .fiscal-summary-label { font-size: 13px; color: var(--text-muted); }
+  .fiscal-summary-value { font-size: 13px; font-weight: 500; color: var(--dark); }
+  .fiscal-highlight { color: var(--olive-dark) !important; }
+
+  .cert-actions {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  /* Completed overlay */
+  .completed-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--olive-light);
+    color: var(--dark-soft);
+    border-radius: 50px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* Responsive */
+  @media (min-width: 431px) {
+    .app-shell {
+      margin: 20px auto;
+      min-height: auto;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .cta-fixed {
+      border-radius: 0 0 24px 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===== SCREEN 1: LANDING ===== -->
+  <div id="screen-landing" class="screen active">
+    <div class="landing-hero">
+      <div class="hero-bg-pattern"></div>
+      <div class="hero-grain"></div>
+      <div class="hero-circle"></div>
+      <div class="hero-circle-2"></div>
+
+      <div class="hero-eyebrow">↯ Logística con propósito</div>
+      <h1 class="hero-title">Tu camión<br>vacío puede<br><em>alimentar</em><br>una familia.</h1>
+
+      <div class="hero-stat">
+        <div class="hero-stat-item">
+          <div class="hero-stat-number">9.7M</div>
+          <div class="hero-stat-label">Ton. desperdiciadas/año</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-number">13%</div>
+          <div class="hero-stat-label">Niños con desnutrición</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-number">0 km</div>
+          <div class="hero-stat-label">Desvío promedio</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="landing-body">
+      <p class="value-prop">
+        Tus trayectos de regreso son <strong>capacidad ociosa</strong>.
+        Conviértelos en misiones de rescate sin alterar tu presupuesto operativo
+        y con <strong>beneficios tributarios reales</strong>.
+      </p>
+
+      <div class="feature-pills">
+        <span class="badge">Sin costo extra</span>
+        <span class="badge">Art. 257 DIAN</span>
+        <span class="badge">Deducción fiscal</span>
+        <span class="badge">Última milla</span>
+      </div>
+
+      <div class="landing-ctas">
+        <button class="btn-primary" onclick="goTo('screen-register')">Quiero ser Guardián</button>
+        <button class="btn-secondary" onclick="goTo('screen-dashboard')">Ver misiones disponibles</button>
+        <p class="trust-line">Más de 240 transportadores activos · 18 bancos de alimentos</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 2: REGISTRO ===== -->
+  <div id="screen-register" class="screen">
+    <div class="form-hero">
+      <div class="form-hero-bg"></div>
+      <nav class="nav-bar" style="background:transparent; border:none; padding-top:0; padding-bottom:0; margin-bottom:16px;">
+        <button class="nav-back" onclick="goTo('screen-landing')" style="color:rgba(240,237,228,0.5);">Inicio</button>
+        <span class="nav-logo" style="color:var(--cream);">G<span style="color:var(--olive)">A</span></span>
+      </nav>
+      <h2 class="form-hero-title">Únete a los<br><span>Guardianes</span></h2>
+      <p class="form-hero-sub">Registro en 2 minutos. Empieza a generar impacto desde tu próxima ruta.</p>
+    </div>
+
+    <div class="form-body">
+      <div class="input-group">
+        <label class="input-label">Nombre completo</label>
+        <input type="text" class="input-field" placeholder="Ej: Carlos Herrera" id="reg-name" value="">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Correo electrónico</label>
+        <input type="email" class="input-field" placeholder="tu@correo.com" id="reg-email">
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Tipo de vehículo</label>
+        <div class="vehicle-grid">
+          <div class="vehicle-option" onclick="selectVehicle(this, 'Carga Seca')">
+            <div class="vehicle-icon">🚛</div>
+            <div class="vehicle-name">Carga Seca</div>
+          </div>
+          <div class="vehicle-option selected" onclick="selectVehicle(this, 'Refrigerado')">
+            <div class="vehicle-icon">🧊</div>
+            <div class="vehicle-name">Refrigerado</div>
+          </div>
+          <div class="vehicle-option" onclick="selectVehicle(this, 'Furgón')">
+            <div class="vehicle-icon">🚐</div>
+            <div class="vehicle-name">Furgón</div>
+          </div>
+          <div class="vehicle-option" onclick="selectVehicle(this, 'Plataforma')">
+            <div class="vehicle-icon">🏗️</div>
+            <div class="vehicle-name">Plataforma</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Capacidad de carga</label>
+        <select class="input-field" id="reg-capacity">
+          <option>Menos de 1 tonelada</option>
+          <option>1 – 5 toneladas</option>
+          <option selected>5 – 15 toneladas</option>
+          <option>Más de 15 toneladas</option>
+        </select>
+      </div>
+
+      <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-top: 8px;">
+        <button class="btn-primary" onclick="registerAndGo()">Crear mi cuenta</button>
+        <p class="trust-line">Gratis · Sin compromisos · Tu información es privada</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 3: DASHBOARD ===== -->
+  <div id="screen-dashboard" class="screen">
+    <div class="dashboard-header">
+      <div class="dashboard-header-bg"></div>
+      <nav class="nav-bar" style="background:transparent; border:none; padding-top:0; padding-bottom:16px;">
+        <span class="nav-logo" style="color:var(--cream);">Guardianes <span style="color:var(--olive)">·</span></span>
+        <span class="badge badge-white" id="dash-vehicle-badge">🧊 Refrigerado</span>
+      </nav>
+      <div class="dash-greeting">Bienvenido de vuelta</div>
+      <h2 class="dash-title" id="dash-name">Carlos Herrera</h2>
+      <div class="dash-route">
+        <div class="dash-route-dot"></div>
+        <div class="dash-route-text">Ruta activa: <strong>Bogotá → Medellín</strong></div>
+        <span class="tag-km">Regreso libre</span>
+      </div>
+    </div>
+
+    <div class="dashboard-body">
+      <div class="section-label">
+        <span>Misiones en tu ruta</span>
+        <span style="color:var(--olive-dark); font-weight:600;">3 disponibles</span>
+      </div>
+
+      <!-- MISSION CARD 1 -->
+      <div class="mission-card" onclick="goTo('screen-mission-detail')">
+        <div class="mission-card-top">
+          <div class="mission-card-title">Rescate Banco<br>de Alimentos Bogotá</div>
+          <span class="urgency-chip urgency-high">⚡ Urgente</span>
+        </div>
+        <div class="mission-card-metrics">
+          <div class="metric-item">
+            <div class="metric-value">2.4<span class="metric-unit">km</span></div>
+            <div class="metric-label">Desvío</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">840<span class="metric-unit">kg</span></div>
+            <div class="metric-label">Carga</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">3.2<span class="metric-unit">m³</span></div>
+            <div class="metric-label">Volumen</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value" style="color:var(--olive-dark);">$1.6M</div>
+            <div class="metric-label">Deducción</div>
+          </div>
+        </div>
+        <div class="mission-card-bottom">
+          <div class="org-dot"></div>
+          <span class="org-name">Banco Alimentos Colombia · Transversal 72</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- MISSION CARD 2 -->
+      <div class="mission-card" onclick="goTo('screen-mission-detail')">
+        <div class="mission-card-top">
+          <div class="mission-card-title">Excedentes<br>Mercado Central</div>
+          <span class="urgency-chip urgency-mid">⏰ Hoy</span>
+        </div>
+        <div class="mission-card-metrics">
+          <div class="metric-item">
+            <div class="metric-value">7.1<span class="metric-unit">km</span></div>
+            <div class="metric-label">Desvío</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">1.2<span class="metric-unit">ton</span></div>
+            <div class="metric-label">Carga</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">5.8<span class="metric-unit">m³</span></div>
+            <div class="metric-label">Volumen</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value" style="color:var(--olive-dark);">$2.3M</div>
+            <div class="metric-label">Deducción</div>
+          </div>
+        </div>
+        <div class="mission-card-bottom">
+          <div class="org-dot"></div>
+          <span class="org-name">FoodBank Antioquia · Av. Regional</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- MISSION CARD 3 -->
+      <div class="mission-card" onclick="goTo('screen-mission-detail')">
+        <div class="mission-card-top">
+          <div class="mission-card-title">Productos<br>Lácteos Excedentes</div>
+          <span class="urgency-chip" style="background:#e8f4e8; color:#2d6a2d;">✓ Flexible</span>
+        </div>
+        <div class="mission-card-metrics">
+          <div class="metric-item">
+            <div class="metric-value">12<span class="metric-unit">km</span></div>
+            <div class="metric-label">Desvío</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">640<span class="metric-unit">kg</span></div>
+            <div class="metric-label">Carga</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value">2.1<span class="metric-unit">m³</span></div>
+            <div class="metric-label">Volumen</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value" style="color:var(--olive-dark);">$1.2M</div>
+            <div class="metric-label">Deducción</div>
+          </div>
+        </div>
+        <div class="mission-card-bottom">
+          <div class="org-dot"></div>
+          <span class="org-name">Comedor Comunitario Los Olivos</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 4: DETALLE MISIÓN ===== -->
+  <div id="screen-mission-detail" class="screen">
+    <div class="mission-detail-hero">
+      <div class="mission-detail-hero-bg"></div>
+      <nav class="nav-bar" style="background:transparent; border:none; padding-top:0; padding-bottom:16px;">
+        <button class="nav-back" onclick="goTo('screen-dashboard')" style="color:rgba(240,237,228,0.5);">Misiones</button>
+        <span class="urgency-chip urgency-high" style="font-size:10px;">⚡ Urgente</span>
+      </nav>
+      <div class="mission-detail-org">Banco de Alimentos Colombia</div>
+      <h2 class="mission-detail-title">Rescate en<br>Transversal 72,<br>Bogotá</h2>
+
+      <div class="route-visual">
+        <div class="route-point">
+          <div class="route-point-label">Recoge en</div>
+          <div class="route-point-city">Bogotá</div>
+          <div class="route-point-address">Transversal 72 #40-51</div>
+        </div>
+        <div class="route-arrow">
+          <div class="route-arrow-line"></div>
+          <div class="route-km-badge">+2.4 km</div>
+        </div>
+        <div class="route-point" style="text-align:right;">
+          <div class="route-point-label">Entrega en</div>
+          <div class="route-point-city">Bogotá</div>
+          <div class="route-point-address">Cra 50 #26-20, Bodega B</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-body">
+
+      <!-- IMPACTO -->
+      <div class="impact-section">
+        <div class="impact-section-title">🌱 Impacto de esta misión</div>
+        <div class="impact-grid">
+          <div class="impact-metric">
+            <div class="impact-metric-value">840</div>
+            <div class="impact-metric-label">Kilogramos rescatados</div>
+          </div>
+          <div class="impact-metric">
+            <div class="impact-metric-value">~560</div>
+            <div class="impact-metric-label">Raciones generadas</div>
+          </div>
+          <div class="impact-metric">
+            <div class="impact-metric-value">3.2</div>
+            <div class="impact-metric-label">m³ de espacio requerido</div>
+          </div>
+          <div class="impact-metric">
+            <div class="impact-metric-value">420 kg</div>
+            <div class="impact-metric-label" style="font-size:10px;">CO₂ evitado (estimado)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENEFICIO FISCAL -->
+      <div class="fiscal-card">
+        <div class="fiscal-card-bg"></div>
+        <div class="fiscal-card-title">📋 Beneficio Tributario</div>
+        <p class="fiscal-card-text">
+          Al completar esta misión, recibes un certificado de donación en especie
+          por <strong>$4.2M en mercancía</strong>, deducible al 25% de tu renta.
+        </p>
+        <p class="fiscal-card-text" style="margin-top:10px;">
+          Beneficio fiscal estimado: <strong>$1.050.000 COP</strong>
+        </p>
+        <span class="fiscal-article">Art. 257 E.T. · Decreto 2150/2017</span>
+      </div>
+
+      <!-- ESPECIFICACIONES -->
+      <div class="impact-section" style="margin-bottom:0;">
+        <div class="impact-section-title">⚙️ Especificaciones logísticas</div>
+        <div class="spec-row">
+          <span class="spec-label">Peso</span>
+          <span class="spec-value">840 kg</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Volumen</span>
+          <span class="spec-value">3.2 m³</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Tipo de carga</span>
+          <span class="spec-value">Refrigerada (0–4°C)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Desvío total</span>
+          <span class="spec-value">2.4 km adicionales</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Ventana de recogida</span>
+          <span class="spec-value">Hoy 09:00 – 14:00</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Requiere pallets</span>
+          <span class="spec-value">No</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cta-fixed">
+      <button class="btn-primary" onclick="goTo('screen-pickup')">Aceptar misión</button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 5: RECOGIDA Y ENTREGA ===== -->
+  <div id="screen-pickup" class="screen">
+    <div class="pickup-header">
+      <div class="pickup-header-bg"></div>
+      <nav class="nav-bar" style="background:transparent; border:none; padding-top:0; padding-bottom:16px;">
+        <button class="nav-back" onclick="goTo('screen-mission-detail')" style="color:rgba(240,237,228,0.5);">Detalle</button>
+        <span class="badge badge-white" id="pickup-step-badge">Paso 1 de 2</span>
+      </nav>
+      <div class="mission-progress-bar">
+        <div class="mission-progress-fill" id="pickup-progress" style="width: 50%"></div>
+      </div>
+      <h2 class="pickup-title" id="pickup-title">En camino<br>al punto de recogida</h2>
+      <p class="pickup-subtitle" id="pickup-sub">Banco de Alimentos · Transversal 72</p>
+    </div>
+
+    <div class="pickup-body">
+
+      <div class="step-card active" id="step1-card">
+        <div class="step-number active" id="step1-num">1</div>
+        <div class="step-card-title">Llega al punto de origen</div>
+        <div class="step-card-desc">Dirígete a la bodega y coordina con el encargado para cargar los alimentos.</div>
+        <div class="address-chip">
+          <div class="address-chip-dot"></div>
+          <span class="address-chip-text">Transversal 72 #40-51, Bogotá · Contacto: Alberto Mora · 311 456 7890</span>
+        </div>
+      </div>
+
+      <div class="step-card" id="step2-card" style="opacity:0.5;">
+        <div class="step-number" id="step2-num">2</div>
+        <div class="step-card-title">Entrega en banco de alimentos</div>
+        <div class="step-card-desc">Confirma la entrega y recibe el acuse de recibido con sello oficial.</div>
+        <div class="address-chip">
+          <div class="address-chip-dot" style="background:var(--text-light);"></div>
+          <span class="address-chip-text" style="color:var(--text-light);">Cra 50 #26-20, Bodega B · Horario: 07:00–18:00</span>
+        </div>
+      </div>
+
+      <div id="confirm-section" style="margin-top: 8px;">
+        <div style="background:var(--white); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:14px;">
+          <div style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); font-weight:500; margin-bottom:10px;">📷 Evidencia fotográfica</div>
+          <div style="background:var(--cream); border-radius:10px; border:1.5px dashed var(--border); height:80px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text-light); font-size:13px; cursor:pointer;" onclick="simulatePhoto()">
+            <span style="font-size:20px;">📸</span>
+            <span>Tomar foto de carga</span>
+          </div>
+          <div id="photo-confirm" style="display:none; margin-top:8px;">
+            <span class="completed-check">✓ Foto registrada</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="cta-fixed">
+      <button class="btn-primary" id="main-pickup-btn" onclick="nextPickupStep()">Carga a bordo ✓</button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 6: CERTIFICACIÓN ===== -->
+  <div id="screen-cert" class="screen">
+    <div class="cert-header">
+      <div class="cert-header-bg"></div>
+      <div class="cert-icon">🛡️</div>
+      <h2 class="cert-title">¡Misión<br>Cumplida!</h2>
+      <p class="cert-subtitle">Has completado tu primera misión como Guardián</p>
+    </div>
+
+    <div class="cert-body">
+
+      <div class="impact-summary">
+        <div class="impact-summary-item">
+          <div class="impact-summary-value">840</div>
+          <div class="impact-summary-label">kg rescatados</div>
+        </div>
+        <div class="impact-summary-item">
+          <div class="impact-summary-value">~560</div>
+          <div class="impact-summary-label">Raciones</div>
+        </div>
+        <div class="impact-summary-item">
+          <div class="impact-summary-value">2.4</div>
+          <div class="impact-summary-label">km desvío</div>
+        </div>
+        <div class="impact-summary-item">
+          <div class="impact-summary-value" style="color:var(--olive-dark);">$1.05M</div>
+          <div class="impact-summary-label">Ahorro fiscal</div>
+        </div>
+      </div>
+
+      <!-- MEMBERSHIP CARD -->
+      <div style="font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); font-weight:500; margin-bottom:12px;">Tu tarjeta de miembro</div>
+      <div class="member-card-wrapper">
+        <div class="member-card">
+          <div class="member-card-bg1"></div>
+          <div class="member-card-bg2"></div>
+          <div class="member-card-bg3"></div>
+          <div class="member-card-top">
+            <div class="member-card-logo">Guardianes de Alimentos</div>
+            <div class="member-badge">Classic</div>
+          </div>
+          <div class="member-card-mid">
+            <div class="member-card-role">Guardián Activo</div>
+            <div class="member-card-name" id="cert-name">Carlos Herrera</div>
+          </div>
+          <div class="member-card-bottom">
+            <div class="member-card-id">GA-2024-0247</div>
+            <div class="member-card-since">Miembro desde<br>Abr. 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FISCAL SUMMARY -->
+      <div class="fiscal-summary">
+        <div class="fiscal-summary-title">📋 Certificado Tributario</div>
+        <div class="fiscal-summary-row">
+          <span class="fiscal-summary-label">Valor donación en especie</span>
+          <span class="fiscal-summary-value">$4.200.000 COP</span>
+        </div>
+        <div class="fiscal-summary-row">
+          <span class="fiscal-summary-label">Base deducción (Art. 257)</span>
+          <span class="fiscal-summary-value">$1.050.000 COP</span>
+        </div>
+        <div class="fiscal-summary-row">
+          <span class="fiscal-summary-label">Emisor certificado</span>
+          <span class="fiscal-summary-value">Banco Alimentos Col.</span>
+        </div>
+        <div class="fiscal-summary-row">
+          <span class="fiscal-summary-label">Estado certificado</span>
+          <span class="fiscal-summary-value fiscal-highlight">✓ Disponible en 24h</span>
+        </div>
+      </div>
+
+      <div class="cert-actions">
+        <button class="btn-primary" onclick="goTo('screen-dashboard')">Ver más misiones</button>
+        <button class="btn-secondary" onclick="shareImpact()">Compartir mi impacto</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selectedVehicle = 'Refrigerado';
+  let pickupStep = 1;
+  let userName = 'Carlos Herrera';
+
+  function goTo(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function selectVehicle(el, name) {
+    document.querySelectorAll('.vehicle-option').forEach(v => v.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedVehicle = name;
+  }
+
+  function registerAndGo() {
+    const nameInput = document.getElementById('reg-name');
+    const name = nameInput.value.trim() || 'Carlos Herrera';
+    userName = name;
+
+    document.getElementById('dash-name').textContent = name;
+    document.getElementById('cert-name').textContent = name;
+
+    const emoji = {
+      'Carga Seca': '🚛',
+      'Refrigerado': '🧊',
+      'Furgón': '🚐',
+      'Plataforma': '🏗️'
+    };
+    document.getElementById('dash-vehicle-badge').textContent = (emoji[selectedVehicle] || '🚛') + ' ' + selectedVehicle;
+
+    goTo('screen-dashboard');
+  }
+
+  function simulatePhoto() {
+    document.getElementById('photo-confirm').style.display = 'block';
+  }
+
+  function nextPickupStep() {
+    if (pickupStep === 1) {
+      pickupStep = 2;
+      document.getElementById('pickup-progress').style.width = '100%';
+      document.getElementById('pickup-step-badge').textContent = 'Paso 2 de 2';
+      document.getElementById('pickup-title').textContent = 'Entregando en\nbanco de alimentos';
+      document.getElementById('pickup-sub').textContent = 'Banco de Alimentos · Cra 50 #26-20';
+
+      const step1 = document.getElementById('step1-card');
+      step1.classList.remove('active');
+      step1.classList.add('completed');
+      step1.style.opacity = '0.7';
+      document.getElementById('step1-num').className = 'step-number done';
+      document.getElementById('step1-num').textContent = '✓';
+
+      const step2 = document.getElementById('step2-card');
+      step2.classList.add('active');
+      step2.style.opacity = '1';
+      document.getElementById('step2-num').className = 'step-number active';
+
+      document.getElementById('main-pickup-btn').textContent = 'Misión Cumplida ✓';
+    } else {
+      goTo('screen-cert');
+      pickupStep = 1;
+      document.getElementById('pickup-progress').style.width = '50%';
+      document.getElementById('pickup-step-badge').textContent = 'Paso 1 de 2';
+      document.getElementById('pickup-title').textContent = 'En camino\nal punto de recogida';
+      document.getElementById('pickup-sub').textContent = 'Banco de Alimentos · Transversal 72';
+      document.getElementById('step1-card').classList.remove('completed');
+      document.getElementById('step1-card').classList.add('active');
+      document.getElementById('step1-card').style.opacity = '1';
+      document.getElementById('step1-num').className = 'step-number active';
+      document.getElementById('step1-num').textContent = '1';
+      document.getElementById('step2-card').classList.remove('active');
+      document.getElementById('step2-card').style.opacity = '0.5';
+      document.getElementById('step2-num').className = 'step-number';
+      document.getElementById('main-pickup-btn').textContent = 'Carga a bordo ✓';
+      document.getElementById('photo-confirm').style.display = 'none';
+    }
+  }
+
+  function shareImpact() {
+    const text = '¡Acabo de completar mi primera misión como Guardián de Alimentos! Rescaté 840 kg de alimentos que se convertirán en ~560 raciones para familias vulnerables. #GuardianesDeAlimentos #ImpactoSocial';
+    if (navigator.share) {
+      navigator.share({ title: 'Guardianes de Alimentos', text: text });
+    } else {
+      alert('¡Impacto copiado!\n\n' + text);
+    }
+  }
+</script>
+
+</body>
+</html>
