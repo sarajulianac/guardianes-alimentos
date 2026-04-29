@@ -1203,9 +1203,11 @@
       <div class="hero-grain"></div>
       <div class="hero-circle"></div>
       <div class="hero-circle-2"></div>
-
+      <div style="position:relative; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:500; color:var(--cream); letter-spacing:0.04em;">Guardianes <span style="color:var(--olive);">·</span></span>
+      </div>
       <div class="hero-eyebrow">↯ Logística con propósito</div>
-      <h1 class="hero-title">Tu camión<br>vacío puede<br><em>alimentar</em><br>una familia.</h1>
+      <h1 class="hero-title">Compartiendo<br>tu ruta puedes<br><em>alimentar</em> a las<br>familias<br>colombianas</h1>
 
       <div class="hero-stat">
         <div class="hero-stat-item">
@@ -1311,15 +1313,36 @@
     <div class="dashboard-header">
       <div class="dashboard-header-bg"></div>
       <nav class="nav-bar" style="background:transparent; border:none; padding-top:0; padding-bottom:16px;">
+        <button class="nav-back" onclick="goTo('screen-landing')" style="color:rgba(240,237,228,0.5);">Inicio</button>
         <span class="nav-logo" style="color:var(--cream);">Guardianes <span style="color:var(--olive)">·</span></span>
-        <span class="badge badge-white" id="dash-vehicle-badge">🧊 Refrigerado</span>
+        <div style="position:relative; display:inline-flex; align-items:center;">
+          <select id="dash-vehicle-select" onchange="updateVehicleBadge(this)" style="appearance:none; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:50px; padding:5px 28px 5px 12px; font-family:'Jost',sans-serif; font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:#fff; cursor:pointer; outline:none;">
+            <option value="🧊 Refrigerado" selected>🧊 Refrigerado</option>
+            <option value="🚛 Carga Seca">🚛 Carga Seca</option>
+            <option value="🚐 Furgón">🚐 Furgón</option>
+            <option value="🏗️ Plataforma">🏗️ Plataforma</option>
+          </select>
+          <span style="position:absolute; right:10px; pointer-events:none; font-size:9px; color:rgba(255,255,255,0.6);">▾</span>
+        </div>
       </nav>
       <div class="dash-greeting">Bienvenido de vuelta</div>
       <h2 class="dash-title" id="dash-name">Carlos Herrera</h2>
-      <div class="dash-route">
+      <div class="dash-route" id="route-display" onclick="toggleRouteEdit()" style="cursor:pointer;">
         <div class="dash-route-dot"></div>
-        <div class="dash-route-text">Ruta activa: <strong>Bogotá → Medellín</strong></div>
-        <span class="tag-km">Regreso libre</span>
+        <div class="dash-route-text">Ruta activa: <strong id="route-label">Bogotá → Medellín</strong></div>
+        <span style="font-size:11px; color:rgba(205,209,122,0.7); font-weight:500; letter-spacing:0.06em;">✎</span>
+      </div>
+      <div id="route-edit" style="display:none; margin-top:10px; background:rgba(255,255,255,0.07); border-radius:10px; padding:12px 14px; position:relative;">
+        <div style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(205,209,122,0.6); font-weight:500; margin-bottom:10px;">Editar ruta</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+          <div style="width:8px; height:8px; border-radius:50%; background:var(--olive); flex-shrink:0;"></div>
+          <input id="route-origin" type="text" placeholder="Origen (ej: Bogotá)" value="Bogotá" style="flex:1; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 12px; font-family:'Jost',sans-serif; font-size:13px; color:var(--cream); outline:none;" />
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+          <div style="width:8px; height:8px; border-radius:2px; background:var(--olive-dark); flex-shrink:0;"></div>
+          <input id="route-dest" type="text" placeholder="Destino (ej: Medellín)" value="Medellín" style="flex:1; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 12px; font-family:'Jost',sans-serif; font-size:13px; color:var(--cream); outline:none;" />
+        </div>
+        <button onclick="saveRoute()" style="background:var(--olive); color:var(--dark); border:none; border-radius:50px; padding:8px 20px; font-family:'Jost',sans-serif; font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; width:100%;">Actualizar ruta</button>
       </div>
     </div>
 
@@ -1332,26 +1355,35 @@
       <!-- MISSION CARD 1 -->
       <div class="mission-card" onclick="goTo('screen-mission-detail')">
         <div class="mission-card-top">
-          <div class="mission-card-title">Rescate Banco<br>de Alimentos Bogotá</div>
+          <div>
+            <div class="mission-card-title">Rescate Banco<br>de Alimentos Bogotá</div>
+            <div style="display:flex; align-items:center; gap:6px; margin-top:6px;">
+              <span class="tag-km">↗ 2.4 km de desvío</span>
+            </div>
+          </div>
           <span class="urgency-chip urgency-high">⚡ Urgente</span>
         </div>
-        <div class="mission-card-metrics">
-          <div class="metric-item">
-            <div class="metric-value">2.4<span class="metric-unit">km</span></div>
-            <div class="metric-label">Desvío</div>
+        <div class="mission-card-metrics" style="display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid var(--border);">
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Producto</div>
+            <div class="metric-value" style="font-size:15px;">Lácteos</div>
           </div>
-          <div class="metric-item">
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Envase</div>
+            <div class="metric-value" style="font-size:15px;">Canastilla</div>
+          </div>
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Peso</div>
             <div class="metric-value">840<span class="metric-unit">kg</span></div>
-            <div class="metric-label">Carga</div>
           </div>
-          <div class="metric-item">
-            <div class="metric-value">3.2<span class="metric-unit">m³</span></div>
-            <div class="metric-label">Volumen</div>
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Dimensiones</div>
+            <div class="metric-value" style="font-size:13px; letter-spacing:0.01em;">120×80×90 cm</div>
           </div>
-          <div class="metric-item">
-            <div class="metric-value" style="color:var(--olive-dark);">$1.6M</div>
-            <div class="metric-label">Deducción</div>
-          </div>
+        </div>
+        <div style="margin: 0 16px 12px; background:var(--olive-light); border-radius:8px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dark-soft); font-weight:600;">Beneficio fiscal</span>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--dark);">$1.6M COP</span>
         </div>
         <div class="mission-card-bottom">
           <div class="org-dot"></div>
@@ -1363,26 +1395,35 @@
       <!-- MISSION CARD 2 -->
       <div class="mission-card" onclick="goTo('screen-mission-detail')">
         <div class="mission-card-top">
-          <div class="mission-card-title">Excedentes<br>Mercado Central</div>
+          <div>
+            <div class="mission-card-title">Excedentes<br>Mercado Central</div>
+            <div style="display:flex; align-items:center; gap:6px; margin-top:6px;">
+              <span class="tag-km">↗ 7.1 km de desvío</span>
+            </div>
+          </div>
           <span class="urgency-chip urgency-mid">⏰ Hoy</span>
         </div>
-        <div class="mission-card-metrics">
-          <div class="metric-item">
-            <div class="metric-value">7.1<span class="metric-unit">km</span></div>
-            <div class="metric-label">Desvío</div>
+        <div class="mission-card-metrics" style="display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid var(--border);">
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Producto</div>
+            <div class="metric-value" style="font-size:15px;">Frutas</div>
           </div>
-          <div class="metric-item">
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Envase</div>
+            <div class="metric-value" style="font-size:15px;">Guacal</div>
+          </div>
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Peso</div>
             <div class="metric-value">1.2<span class="metric-unit">ton</span></div>
-            <div class="metric-label">Carga</div>
           </div>
-          <div class="metric-item">
-            <div class="metric-value">5.8<span class="metric-unit">m³</span></div>
-            <div class="metric-label">Volumen</div>
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Dimensiones</div>
+            <div class="metric-value" style="font-size:13px; letter-spacing:0.01em;">100×80×85 cm</div>
           </div>
-          <div class="metric-item">
-            <div class="metric-value" style="color:var(--olive-dark);">$2.3M</div>
-            <div class="metric-label">Deducción</div>
-          </div>
+        </div>
+        <div style="margin: 0 16px 12px; background:var(--olive-light); border-radius:8px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dark-soft); font-weight:600;">Beneficio fiscal</span>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--dark);">$2.3M COP</span>
         </div>
         <div class="mission-card-bottom">
           <div class="org-dot"></div>
@@ -1394,26 +1435,35 @@
       <!-- MISSION CARD 3 -->
       <div class="mission-card" onclick="goTo('screen-mission-detail')">
         <div class="mission-card-top">
-          <div class="mission-card-title">Productos<br>Lácteos Excedentes</div>
+          <div>
+            <div class="mission-card-title">Productos<br>Lácteos Excedentes</div>
+            <div style="display:flex; align-items:center; gap:6px; margin-top:6px;">
+              <span class="tag-km">↗ 12 km de desvío</span>
+            </div>
+          </div>
           <span class="urgency-chip" style="background:#e8f4e8; color:#2d6a2d;">✓ Flexible</span>
         </div>
-        <div class="mission-card-metrics">
-          <div class="metric-item">
-            <div class="metric-value">12<span class="metric-unit">km</span></div>
-            <div class="metric-label">Desvío</div>
+        <div class="mission-card-metrics" style="display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid var(--border);">
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Producto</div>
+            <div class="metric-value" style="font-size:15px;">Cárnicos</div>
           </div>
-          <div class="metric-item">
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Envase</div>
+            <div class="metric-value" style="font-size:15px;">Bolsa vac.</div>
+          </div>
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Peso</div>
             <div class="metric-value">640<span class="metric-unit">kg</span></div>
-            <div class="metric-label">Carga</div>
           </div>
-          <div class="metric-item">
-            <div class="metric-value">2.1<span class="metric-unit">m³</span></div>
-            <div class="metric-label">Volumen</div>
+          <div class="metric-item" style="text-align:left;">
+            <div class="metric-label" style="margin-bottom:4px;">Dimensiones</div>
+            <div class="metric-value" style="font-size:13px; letter-spacing:0.01em;">90×60×70 cm</div>
           </div>
-          <div class="metric-item">
-            <div class="metric-value" style="color:var(--olive-dark);">$1.2M</div>
-            <div class="metric-label">Deducción</div>
-          </div>
+        </div>
+        <div style="margin: 0 16px 12px; background:var(--olive-light); border-radius:8px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dark-soft); font-weight:600;">Beneficio fiscal</span>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--dark);">$1.2M COP</span>
         </div>
         <div class="mission-card-bottom">
           <div class="org-dot"></div>
@@ -1484,7 +1534,7 @@
         <div class="fiscal-card-title">📋 Beneficio Tributario</div>
         <p class="fiscal-card-text">
           Al completar esta misión, recibes un certificado de donación en especie
-          por <strong>$4.2M en mercancía</strong>, deducible al 25% de tu renta.
+          por <strong>$4.2M en mercancía</strong>, deducible al 37% de tu renta.
         </p>
         <p class="fiscal-card-text" style="margin-top:10px;">
           Beneficio fiscal estimado: <strong>$1.050.000 COP</strong>
@@ -1516,8 +1566,8 @@
           <span class="spec-value">Hoy 09:00 – 14:00</span>
         </div>
         <div class="spec-row">
-          <span class="spec-label">Requiere pallets</span>
-          <span class="spec-value">No</span>
+          <span class="spec-label">Observaciones</span>
+          <span class="spec-value">Carga frágil, manipular con cuidado</span>
         </div>
       </div>
 
@@ -1589,6 +1639,10 @@
   <div id="screen-cert" class="screen">
     <div class="cert-header">
       <div class="cert-header-bg"></div>
+      <nav class="nav-bar" style="background:transparent; border:none; padding-top:0; padding-bottom:16px; position:relative;">
+        <button class="nav-back" onclick="goTo('screen-pickup')" style="color:rgba(240,237,228,0.5);">Misión</button>
+        <span></span>
+      </nav>
       <div class="cert-icon">🛡️</div>
       <h2 class="cert-title">¡Misión<br>Cumplida!</h2>
       <p class="cert-subtitle">Has completado tu primera misión como Guardián</p>
@@ -1685,6 +1739,28 @@
     selectedVehicle = name;
   }
 
+  function toggleRouteEdit() {
+    const edit = document.getElementById('route-edit');
+    const display = document.getElementById('route-display');
+    if (edit.style.display === 'none') {
+      edit.style.display = 'block';
+      display.style.display = 'none';
+    } else {
+      edit.style.display = 'none';
+      display.style.display = 'flex';
+    }
+  }
+
+  function saveRoute() {
+    const origin = document.getElementById('route-origin').value.trim() || 'Origen';
+    const dest = document.getElementById('route-dest').value.trim() || 'Destino';
+    document.getElementById('route-label').textContent = origin + ' → ' + dest;
+    document.getElementById('route-edit').style.display = 'none';
+    document.getElementById('route-display').style.display = 'flex';
+  }
+
+
+
   function registerAndGo() {
     const nameInput = document.getElementById('reg-name');
     const name = nameInput.value.trim() || 'Carlos Herrera';
@@ -1699,7 +1775,11 @@
       'Furgón': '🚐',
       'Plataforma': '🏗️'
     };
-    document.getElementById('dash-vehicle-badge').textContent = (emoji[selectedVehicle] || '🚛') + ' ' + selectedVehicle;
+    const vehicleLabel = (emoji[selectedVehicle] || '🚛') + ' ' + selectedVehicle;
+    const sel = document.getElementById('dash-vehicle-select');
+    for (let i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === vehicleLabel) { sel.selectedIndex = i; break; }
+    }
 
     goTo('screen-dashboard');
   }
